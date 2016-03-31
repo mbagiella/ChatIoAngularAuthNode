@@ -33,12 +33,10 @@ server.on('listening', onListening);
 var io = require('socket.io').listen(server);
 
 io.on('connection', function(socket){
-  io.emit('chat','a user connected');
-  socket.on('disconnect', function(){
-    io.emit('chat','user disconnected');
-  });
+  socket.broadcast.emit('chat','a user connected');
+  
   socket.on('chat', function(msg){
-    io.emit('chat', msg);
+    socket.broadcast.emit('chat', msg);
   });
 });
 

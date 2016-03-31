@@ -1,0 +1,44 @@
+doctype html
+html(ng-app="my-chat")
+    head
+        meta(charset="utf-8")
+        meta(http-equiv="X-UA-Compatible",content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1")
+        title= title
+        link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
+    body(ng-controller="MainController as mCtrl")
+        nav.navbar.navbar-default
+            div.container-fluid
+                div.navbar-header
+                    button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target=".navbar-collapse", aria-expanded="false")
+                        span.sr-only Toggle navigation
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a.navbar-brand
+                        i.glyphicon.glyphicon-send
+                div.collapse.navbar-collapse
+                    form.navbar-form.navbar-right(role="search")
+                        div.form-group
+                            div.input-group
+                                span.input-group-addon
+                                    i.glyphicon.glyphicon-user
+                                input.form-control(placeholder="username",required)
+                            button.btn Logout
+
+        div.container(style="position:fixed;top:60px;bottom:80px;" +
+        "overflow:auto;left:0;right:0;z-index:-1000")#list
+            ul.list-group
+                li.list-group-item(ng-repeat="msg in mCtrl.messages track by $index",style="text-align:right").
+                    {{msg}}
+
+        nav.navbar.navbar-inverse.navbar-fixed-bottom
+            div.container
+                form.navbar-form(ng-submit="mCtrl.onSubmit()")
+                    input.form-control(placeholder="Message...",style="width:100%",ng-model="mCtrl.message",required)
+
+    script(src = "/jquery/jquery.js")
+    script(src = "/bootstrap/js/bootstrap.js")
+    script(src = "/angular/angular.js")
+    script(src = "/socket.io/socket.io.js")
+    script(src = "/javascripts/chat.js")
