@@ -1,0 +1,35 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='/socket.io/socket.io.js')
+    script(src='/angular/angular.js')
+    script(src='/angular-ui-bootstrap/ui-bootstrap.js')
+    script(type='text/javascript').
+      var app = angular.module('my-app',[]);
+      var socket = io();
+      app.controller('MainController',function($scope,$location,$anchorScroll){
+        this.data = "";
+        this.messages = [];
+        var self = this;
+        this.onSubmit= function(){
+          socket.emit('chat',this.data);
+          this.data = "";
+        };
+        socket.on('chat', function (msg) {
+          $scope.$apply(function(){
+
+            self.messages.push(msg);
+            self.goToBottom();
+          })
+        });
+        this.goToBottom = function(){
+          $location.hash('end');
+          // call $anchorScroll()
+          $anchorScroll();
+        }
+      })
+
+  body(ng-app="my-app")
+    block content

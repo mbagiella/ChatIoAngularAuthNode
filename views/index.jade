@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  div.container(ng-controller="MainController as mainCtrl")
+    ul#messages
+      li(ng-repeat="msg in mainCtrl.messages track by $index").
+        {{msg}}
+      li
+    form(ng-submit="mainCtrl.onSubmit()")
+      input(autocomplete="off",ng-model="mainCtrl.data")#m
+      button(type='submit')#end Send
