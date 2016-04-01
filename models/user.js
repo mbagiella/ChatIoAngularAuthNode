@@ -7,8 +7,10 @@ SALT_WORK_FACTOR = 10;
 
 var UserSchema = new Schema({
   name: {type:String, required:true, index:{unique:true}} ,
-  password: {type:String,required:true},
-  admin: {type:Boolean,required:true,default:false}
+  password: {type:String,required:false},
+  admin: {type:Boolean,required:true,default:false}},
+{
+  timestamps: true
 });
 
 UserSchema.pre('save', function(next) {

@@ -29,16 +29,7 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-
-var io = require('socket.io').listen(server);
-
-io.on('connection', function(socket){
-  socket.broadcast.emit('chat','a user connected');
-  
-  socket.on('chat', function(msg){
-    socket.broadcast.emit('chat', msg);
-  });
-});
+app.io.attach(server);
 
 /**
  * Normalize a port into a number, string, or false.

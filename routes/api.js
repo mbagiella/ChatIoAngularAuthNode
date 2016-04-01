@@ -1,5 +1,12 @@
 var api = require('express').Router();
-var User   = require('../models/users'); // get our mongoose model
+var User   = require('../models/user'); // get our mongoose model
+var Message = require('../models/message');
+
+api.get('/message',function(req,res){
+    Message.find({},function(err,msg){
+        res.json({msg:msg,error:err});
+    });
+});
 
 api.get('/',function(req,res){
     res.json({message:'Welcome to api'})
@@ -49,7 +56,6 @@ api.get('/users',function(req,res){
     User.find({},function(err,users){
         res.json({users:users});
     })
-
 });
 
 module.exports = api;

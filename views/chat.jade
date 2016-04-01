@@ -1,5 +1,5 @@
 doctype html
-html(ng-app="my-chat")
+html(ng-app="myChat")
     head
         meta(charset="utf-8")
         meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -15,22 +15,27 @@ html(ng-app="my-chat")
                         span.icon-bar
                         span.icon-bar
                         span.icon-bar
-                    a.navbar-brand
-                        i.glyphicon.glyphicon-send
+                    a.navbar-brand.
+                        {{mCtrl.user.name}}
                 div.collapse.navbar-collapse
-                    form.navbar-form.navbar-right(role="search")
+                    form.navbar-form.navbar-right(ng-submit="mCtrl.login()",ng-if="!mCtrl.user._id")
                         div.form-group
                             div.input-group
                                 span.input-group-addon
                                     i.glyphicon.glyphicon-user
-                                input.form-control(placeholder="username",required)
-                            button.btn Logout
-
-        div.container(style="position:fixed;top:60px;bottom:80px;" +
-        "overflow:auto;left:0;right:0;z-index:-1000")#list
-            ul.list-group
-                li.list-group-item(ng-repeat="msg in mCtrl.messages track by $index",style="text-align:right").
-                    {{msg}}
+                                input.form-control(placeholder="username",required,ng-model="mCtrl.username")
+                    button.btn.btn-default.navbar-btn.navbar-right(ng-if="mCtrl.user._id", ng-click="mCtrl.logout()") Logout
+        div.container
+            div.row
+                div.col-lg-9
+                    ul.list-group#list
+                        li.list-group-item(ng-repeat="msg in mCtrl.messages track by $index",ng-class="mCtrl.getChatClass(msg.type)").
+                            {{msg.msg}}
+                div.col-lg-3
+                    h3 List of Chatters ({{mCtrl.users.length}})
+                    ul.list-group
+                        li.list-group-item(ng-repeat="usr in mCtrl.users").
+                            {{usr}}
 
         nav.navbar.navbar-inverse.navbar-fixed-bottom
             div.container

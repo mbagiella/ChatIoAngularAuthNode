@@ -8,8 +8,12 @@ var config = require('./bin/config'); // get our config file
 var api = require('./routes/api');
 var mongoose = require('mongoose');
 var jwt    = require('jsonwebtoken');
-var User   = require('./models/users');
+var User   = require('./models/user');
+var Message   = require('./models/message');
 var app = express();
+
+app.io = require('socket.io')();
+
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -26,6 +30,32 @@ app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+app.post('/login',function(req,res){
+  var token;
+  var name = req.body.username;
+  if(name){
+    User.findOne({name:name},function(err,user){
+      if(user){
+        token = jwt.sign(user, config.secret, {
+          expiresIn: 86400 // expires in 24 hours
+        });
+        res.json({success:true,user:user,error:err,status:'found',token:token});
+      }else{
+        user = new User({name:name});
+        user.save(function(err){
+          var success = err ? false : true;
+          token = jwt.sign(user, config.secret, {
+            expiresIn: 86400 // expires in 24 hours
+          });
+          res.json({success:success,user:user,error:err,status:'saved',token:token});
+        });
+      }
+    });
+  }else {
+    res.json({success: false, error: 'Name is required'})
+  }
+});
 
 app.post('/authenticate', function(req, res) {
   // find the user
@@ -73,8 +103,6 @@ app.get('/',function(req,res){
   res.render('chat');
 });
 
-
-
 app.use('/api',api);
 
 mongoose.connect(config.database);
@@ -108,6 +136,17 @@ app.use(function(err, req, res) {
   res.render('error', {
     message: err.message,
     error: {}
+  });
+});
+
+app.io.on('connection', function(socket){
+  socket.broadcast.emit('chat',{msg:'a new user is connected',type:0});
+
+  socket.on('chat', function(msg){
+    var message = new Message({msg:msg.msg,user_id:msg._id});
+    message.save(function(){
+      socket.broadcast.emit('chat', msg);
+    });
   });
 });
 
